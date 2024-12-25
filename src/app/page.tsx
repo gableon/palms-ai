@@ -73,16 +73,19 @@ const HomePage: React.FC = () => {
                         {/*<div className="absolute inset-0 flex items-center justify-center bg-no-repeat bg-cover bg-center bg-[url(/images/vibrant-sound-wave.jpeg)]"/>*/}
                     </div>
                     <div className="relative z-10 text-center">
-                        {/* Placeholder for Animation */}
-                        <div className="w-full h-40 flex justify-center items-center">
-                            <div className="text-3xl font-bold opacity-80">[AI Animation with sounwave moving as it
-                                speaks]
+                        <div className="w-full h-40 flex justify-center items-center mt-10">
+                            <div className="relative z-10 text-center">
+                                {/* Placeholder for Animation */}
+                                <div className="w-80 h-80 flex justify-center items-center">
+                                    <div
+                                        className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse blur-lg w-full h-full"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Dynamic Carousel for Featured Tokens */}
-                    <div className="mt-24 max-w-full overflow-x-auto w-full z-10">
+                    <div className="mt-2 max-w-full overflow-x-auto w-full z-10">
                         <div className="flex overflow-scroll space-x-6 [&>div]:flex-shrink-0">
                             {featuredTokens.map((token, index) => (
                                 <div
