@@ -2,7 +2,7 @@
 
 import React, {useContext, useEffect, useState} from 'react';
 import {AgentContext} from "@/contexts/AgentProvider";
-import {fetchPrice} from "@/api/fetchPrice";
+import {fetchToken} from "@/api/fetchToken";
 import { FaSpinner } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 
@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
             if (currentIndex === responseMessage.length) {
                 clearInterval(interval);
             }
-        }, 30); // Adjust typing speed here
+        }, 10); // Adjust typing speed here
 
         return () => clearInterval(interval);
     }, [responseMessage]);
@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
             setResponseMessage(null)
 
             setIsLoading(true)
-            const resp = await fetchPrice({
+            const resp = await fetchToken({
                 message: userMessage,
             });
             setResponseMessage(resp?.message)
