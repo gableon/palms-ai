@@ -7,6 +7,7 @@ import { FaSpinner } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 import {playBase64Audio} from "@/utils";
 import {FeaturedToken} from "@/types";
+import {getTokenName} from "@/api/tokenName";
 
 const HomePage: React.FC = () => {
     const {featuredTokens} = useContext(AgentContext);
@@ -15,6 +16,7 @@ const HomePage: React.FC = () => {
 
     const [audioPlayed, setAudioPlayed] = useState(false);
     const [userMessage, setUserMessage] = useState('');
+    const [tokenName, setTokenName] = useState("Palms");
     const [isLoading, setIsLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
     const [displayedMessage, setDisplayedMessage] = useState('');
@@ -120,6 +122,8 @@ const HomePage: React.FC = () => {
         try {
             if (isLoading) return;
             setIsLoading(true)
+            const {name, symbol} = await getTokenName(message || userMessage)
+            setTokenName(`${name} - ${symbol}`)
 
             const resp = await fetchToken({
                 message: message || userMessage,
@@ -244,7 +248,7 @@ const HomePage: React.FC = () => {
                         {responseMessage && (
                             <div ref={responseRef}
                                 className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl overflow-auto break-words">
-                                <h3 className="text-lg font-bold text-purple-300">Palm:</h3>
+                                <h3 className="text-lg font-bold text-purple-300">{tokenName}</h3>
                                 <ReactMarkdown className="mt-2 whitespace-pre-wrap break-words">{displayedMessage}</ReactMarkdown>
                             </div>
                         )}

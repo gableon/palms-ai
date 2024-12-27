@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **Palms: Your AI Trading Ally on Solana**
 
-## Getting Started
+**Palms** is the ultimate AI-powered trading agent designed to revolutionize how traders interact with the Solana ecosystem. With state-of-the-art **Large Language Models (LLMs)** and **Machine Learning**, Palms brings advanced token analysis, seamless trade execution, and cutting-edge decentralized capabilities to your fingertips.
 
-First, run the development server:
+## **Why Palms?**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **LLM-Enhanced Intelligence**: Receive top-notch token analysis powered by advanced language models for precision insights.
+- **Machine Learning Optimization**: Make smarter trading decisions with real-time predictions and adaptive AI models.
+- **Decentralized and Secure**: Built on Solana, leveraging its speed and scalability for trustless trading.
+- **User-Friendly Interface**: A voice-powered webapp makes complex trading accessible to everyone.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Palms isn’t just an assistant—it’s your partner in achieving financial success on Solana.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## **Features**
 
-## Learn More
+- Real-time token analysis using AI and ML.
+- Integrated trading functionalities for seamless execution.
+- Autonomous agents (mini-palms) for optimized trades.
+- Decentralized, secure, and scalable infrastructure.
+- Twitter integration for exclusive community features.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## **Roadmap**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **Phase 1: Voice-Powered Webapp**
+Launch a public-facing, intuitive webapp where users can input tokens and receive premium analysis and actionable recommendations.
 
-## Deploy on Vercel
+### **Phase 2: Twitter Integration**
+Activate Palms’ presence on Twitter as an AI-powered agent, delivering insights and engaging the trading community.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **Phase 3: Tokenization**
+Introduce token-based access within the ecosystem, granting exclusive features to token holders.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### **Phase 4: Trading Functionalities**
+Integrate advanced trading tools to enable seamless trade execution within the Palms platform.
+
+### **Phase 5: Twitter Whitelist**
+Restrict Twitter functionalities to token holders who have whitelisted their accounts for a more exclusive experience.
+
+### **Phase 6: Decentralized Mini-Palms**
+Deploy autonomous agents that can optimize trades on your behalf. Deposit SOL into a trusted execution environment (TEE) and let mini-Palms handle the rest.
+
+---
+
+## **How to Get Started**
+
+1. **Access the Webapp**: Start by visiting our user-friendly webapp and explore Palms’ token analysis tools.
+2. **Engage on Twitter**: Follow Palms’ updates and insights, and join the conversation.
+3. **Tokenize Your Experience**: Stay tuned for our upcoming token launch to unlock premium features.
+
+---
+
+## **Contributing**
+
+We’re building Palms with the community! Contributions are welcome—whether it’s development, feedback, or feature requests. Fork the repo, make your changes, and submit a pull request.
+
+---
+
+## **License**
+
+Palms is open-source and licensed under the [MIT License](LICENSE).
+
+---
+
+Join the Palms revolution and elevate your trading game today!
