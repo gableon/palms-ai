@@ -181,8 +181,7 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {/* Dynamic Carousel for Featured Tokens */}
-                    <div
-                        className="overflow-x-auto scrollbar-thin scrollbar-thumb-dark scrollbar-track-dark scrollbar-thumb-hover">
+                    <div className="mt-0 max-w-full overflow-x-auto whitespace-nowrap">
                         <div className="flex space-x-6">
                             {featuredTokens.map((token, index) => (
                                 <div
