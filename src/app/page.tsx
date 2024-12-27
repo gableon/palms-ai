@@ -3,7 +3,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {AgentContext} from "@/contexts/AgentProvider";
 import {fetchToken} from "@/api/fetchToken";
-import { FaSpinner } from 'react-icons/fa';
+import {FaSpinner} from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 import {playBase64Audio} from "@/utils";
 import {FeaturedToken} from "@/types";
@@ -17,6 +17,7 @@ const HomePage: React.FC = () => {
     const [audioPlayed, setAudioPlayed] = useState(false);
     const [userMessage, setUserMessage] = useState('');
     const [tokenName, setTokenName] = useState("Palms");
+    const [tokenImage, setTokenImage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
     const [displayedMessage, setDisplayedMessage] = useState('');
@@ -24,7 +25,7 @@ const HomePage: React.FC = () => {
 
     useEffect(() => {
         if (responseMessage && responseRef.current) {
-            responseRef.current.scrollIntoView({ behavior: 'smooth' });
+            responseRef.current.scrollIntoView({behavior: 'smooth'});
         }
     }, [responseMessage]);
 
@@ -44,6 +45,16 @@ const HomePage: React.FC = () => {
                 console.error('Error playing audio:', error);
             });
     };
+
+    const playErrorAudio = () => {
+        const audio = new Audio('/error.mp3');
+        welcomeAudioRef.current = audio;
+        audio.play()
+            .then(() => setAudioPlayed(true))
+            .catch((error) => {
+                console.error('Error playing audio:', error);
+            });
+    }
 
     useEffect(() => {
         if (!audioPlayed) {
@@ -118,19 +129,28 @@ const HomePage: React.FC = () => {
         }
     }, [isLoading]);
 
-    const handleSubmit = async (message = "") => {
+    const handleSubmit = async (token?: FeaturedToken | undefined) => {
         try {
             if (isLoading) return;
             setIsLoading(true)
-            const {name, symbol} = await getTokenName(message || userMessage)
+            const {
+                image, name, symbol
+            } = token ? {image: token.image, name: token.name, symbol: token.symbol}
+                : await getTokenName(userMessage)
             setTokenName(`${name} - ${symbol}`)
+            setTokenImage(image || "")
 
+            const tokenmsg = token ? `Featured Token ${token.symbol}` : userMessage;
             const resp = await fetchToken({
-                message: message || userMessage,
+                message: tokenmsg,
             });
             stopWelcomeAudio()
+            if (resp.ok) {
+                playBase64Audio(resp.audioB64)
+            } else {
+                playErrorAudio()
+            }
             setResponseMessage(resp?.text)
-            playBase64Audio(resp.audioB64)
         } catch (error) {
             console.error('Error submitting message:', error);
             setResponseMessage("request failed - please provide a valid contract address")
@@ -140,8 +160,7 @@ const HomePage: React.FC = () => {
     };
 
     const handleCardClick = async (token: FeaturedToken) => {
-        const tokenmsg = `Featured Token ${token.symbol}`
-        await handleSubmit(tokenmsg)
+        await handleSubmit(token)
     };
 
     return (
@@ -182,7 +201,8 @@ const HomePage: React.FC = () => {
 
                     {/* Dynamic Carousel for Featured Tokens */}
                     {/*<div className="mt-0 max-w-full overflow-x-auto whitespace-nowrap">*/}
-                    <div className="relative mt-0 max-w-full overflow-x-auto whitespace-nowrap overscroll-contain scroll-touch">
+                    <div
+                        className="relative mt-0 max-w-full overflow-x-auto whitespace-nowrap overscroll-contain scroll-touch">
                         <div className="flex space-x-6">
                             {featuredTokens.map((token, index) => (
                                 <div
@@ -219,7 +239,7 @@ const HomePage: React.FC = () => {
 
                     {/* User Question Input Section */}
                     <div className="mt-16 w-full flex flex-col items-center z-10">
-                    <h2 className="text-2xl font-bold text-purple-300 mb-4">Ask Palm</h2>
+                        <h2 className="text-2xl font-bold text-purple-300 mb-4">Ask Palm</h2>
                         <div className="w-full max-w-2xl">
                             <input
                                 type="text"
@@ -236,7 +256,7 @@ const HomePage: React.FC = () => {
                             >
                                 {isLoading ? (
                                     <div className="ml-4 flex items-center space-x-2">
-                                        <FaSpinner className="animate-spin" />
+                                        <FaSpinner className="animate-spin"/>
                                         {/*<b><i>fetching LLM data & processing model...</i></b>*/}
                                         <b><i>{loadingText}</i></b>
                                     </div>
@@ -249,9 +269,17 @@ const HomePage: React.FC = () => {
                         {/*/!* AI Assistant Response Section *!/*/}
                         {responseMessage && (
                             <div ref={responseRef}
-                                className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl overflow-auto break-words">
+                                 className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl overflow-auto break-words">
+                                {tokenImage && (
+                                    <img
+                                        src={tokenImage}
+                                        alt={`${tokenName} logo`}
+                                        className="w-10 h-10 rounded-full border-2 border-purple-300"
+                                    />
+                                )}
                                 <h3 className="text-lg font-bold text-purple-300">{tokenName}</h3>
-                                <ReactMarkdown className="mt-2 whitespace-pre-wrap break-words">{displayedMessage}</ReactMarkdown>
+                                <ReactMarkdown
+                                    className="mt-2 whitespace-pre-wrap break-words">{displayedMessage}</ReactMarkdown>
                             </div>
                         )}
 

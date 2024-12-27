@@ -51,6 +51,7 @@ export async function getTokenName(mintAddress: string): Promise<{ name: string;
         return { name, symbol, image: uri };
     } catch (error) {
         console.error("Error fetching token metadata:", error);
-        throw error; // Re-throw the error for upstream handling
+        console.log("fallback to Palms name")
+        return {name: "Palms", symbol: "PLMS", image: ""}
     }
 }

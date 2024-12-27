@@ -34,6 +34,9 @@ export async function fetchToken({ message }: { message: string }) {
         });
 
         // Parse the JSON response
+        if (response.status > 299) {
+            return { ok: false, text: "My API is facing a severe traffic right now baby, I'm overloaded but doing my best to keep my system up to date to fulfill all your desires, please call me again in a moment" }
+        }
         const responseData = await response.json();
         console.log("response data json", responseData);
 
