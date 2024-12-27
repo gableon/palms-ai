@@ -181,7 +181,8 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {/* Dynamic Carousel for Featured Tokens */}
-                    <div className="mt-0 max-w-full overflow-x-auto">
+                    <div
+                        className="overflow-x-auto scrollbar-thin scrollbar-thumb-dark scrollbar-track-dark scrollbar-thumb-hover">
                         <div className="flex space-x-6">
                             {featuredTokens.map((token, index) => (
                                 <div
@@ -207,7 +208,8 @@ const HomePage: React.FC = () => {
                                     <p className="text-sm text-purple-300 mb-1">
                                         📈 24h % Change: {token.change24h ? `${token.change24h.toFixed(2)}%` : 'N/A'}</p>
                                     <p className="text-sm text-purple-300 mb-1">
-                                        🏔️ ATH % Change: {token.athChange ? `${token.athChange.toFixed(2)}%` : 'N/A'}</p>
+                                        🏔️ ATH %
+                                        Change: {token.athChange ? `${token.athChange.toFixed(2)}%` : 'N/A'}</p>
                                     <p className="text-sm text-purple-300">💼 Market
                                         Cap: {token.marketCap ? `$${token.marketCap.toLocaleString()}` : 'N/A'}</p>
                                 </div>
@@ -217,7 +219,7 @@ const HomePage: React.FC = () => {
 
                     {/* User Question Input Section */}
                     <div className="mt-16 w-full flex flex-col items-center z-10">
-                        <h2 className="text-2xl font-bold text-purple-300 mb-4">Ask Palm</h2>
+                    <h2 className="text-2xl font-bold text-purple-300 mb-4">Ask Palm</h2>
                         <div className="w-full max-w-2xl">
                             <input
                                 type="text"
