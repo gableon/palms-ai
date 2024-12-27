@@ -51,6 +51,9 @@ export default {
             backgroundColor: "#6b7280", // Hover thumb color
           },
         },
+        '.scroll-touch': {
+          '-webkit-overflow-scrolling': 'touch',
+        }
       });
     }),
   ],
