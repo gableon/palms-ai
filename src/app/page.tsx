@@ -11,12 +11,14 @@ import {FeaturedToken} from "@/types";
 const HomePage: React.FC = () => {
     const {featuredTokens} = useContext(AgentContext);
     const responseRef = useRef<HTMLDivElement | null>(null);
+    const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
 
     const [audioPlayed, setAudioPlayed] = useState(false);
     const [userMessage, setUserMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
     const [displayedMessage, setDisplayedMessage] = useState('');
+    const [loadingText, setLoadingText] = useState('fetching LLM data & processing model...');
 
     useEffect(() => {
         if (responseMessage && responseRef.current) {
@@ -24,9 +26,17 @@ const HomePage: React.FC = () => {
         }
     }, [responseMessage]);
 
+    const stopWelcomeAudio = () => {
+        if (welcomeAudioRef.current) {
+            welcomeAudioRef.current.pause();
+            welcomeAudioRef.current.currentTime = 0; // Reset to the beginning
+        }
+    };
+
     const playAudio = () => {
-        const audio = new Audio('/welcome.mp3'); // Path to your audio file
-        audio.play()
+        const welcomeAudio = new Audio('/welcome.mp3');
+        welcomeAudioRef.current = welcomeAudio;
+        welcomeAudio.play()
             .then(() => setAudioPlayed(true))
             .catch((error) => {
                 console.error('Error playing audio:', error);
@@ -68,19 +78,58 @@ const HomePage: React.FC = () => {
         return () => clearInterval(interval);
     }, [responseMessage]);
 
+    useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>; // Correctly type the timeout ID
+
+        if (isLoading) {
+            const texts = [
+                'fetching LLM data & processing model...',
+                'connecting to the blockchain...',
+                'analyzing token trends...',
+                'optimizing trade strategies...',
+                'parsing data into human readable string...',
+                'making sure we have a safe connection...',
+                'did I told you I love cats?',
+                'what come first, the chicken or the egg?',
+                'do you like pina coladas?',
+                'and get caught in the rain?',
+                'careless whisper¡?'
+            ];
+
+            let currentIndex = 0;
+
+            const updateText = () => {
+                currentIndex = (currentIndex + 1) % texts.length; // Cycle through texts
+                setLoadingText(texts[currentIndex]);
+
+                // Calculate a random delay between 3 and 5 seconds
+                const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+
+                // Set the next timeout
+                timeoutId = setTimeout(updateText, randomDelay);
+            };
+
+            // Start the first update
+            updateText();
+
+            return () => clearTimeout(timeoutId); // Cleanup on unmount or when loading stops
+        }
+    }, [isLoading]);
+
     const handleSubmit = async (message = "") => {
         try {
             if (isLoading) return;
-            setResponseMessage(null)
-
             setIsLoading(true)
+
             const resp = await fetchToken({
                 message: message || userMessage,
             });
+            stopWelcomeAudio()
             setResponseMessage(resp?.text)
             playBase64Audio(resp.audioB64)
         } catch (error) {
             console.error('Error submitting message:', error);
+            setResponseMessage("request failed please retry")
         } finally {
             setIsLoading(false);
         }
@@ -179,7 +228,15 @@ const HomePage: React.FC = () => {
                                 className="mt-4 w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg transition duration-300"
                                 disabled={isLoading}
                             >
-                                {isLoading ? <FaSpinner className="animate-spin"/> : 'Send'}
+                                {isLoading ? (
+                                    <div className="ml-4 flex items-center space-x-2">
+                                        <FaSpinner className="animate-spin" />
+                                        {/*<b><i>fetching LLM data & processing model...</i></b>*/}
+                                        <b><i>{loadingText}</i></b>
+                                    </div>
+                                ) : (
+                                    'Send'
+                                )}
                             </button>
                         </div>
 
