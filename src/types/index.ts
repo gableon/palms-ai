@@ -10,10 +10,13 @@ export interface Message {
 
 export interface FeaturedToken {
     name: string;
-    slug?: string;
-    contractAddress: string;
-    image?: string;
+    symbol: string;
     price: number | undefined;
+    volume: number | undefined;
+    image?: string;
+    contractAddress?: string;
+    change24h: number | undefined;
+    athChange: number | undefined;
     marketCap: number | undefined;
 }
 

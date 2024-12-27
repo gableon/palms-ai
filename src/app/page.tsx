@@ -1,18 +1,55 @@
 'use client'
 
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {AgentContext} from "@/contexts/AgentProvider";
 import {fetchToken} from "@/api/fetchToken";
 import { FaSpinner } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
+import {playBase64Audio} from "@/utils";
+import {FeaturedToken} from "@/types";
 
 const HomePage: React.FC = () => {
     const {featuredTokens} = useContext(AgentContext);
+    const responseRef = useRef<HTMLDivElement | null>(null);
 
+    const [audioPlayed, setAudioPlayed] = useState(false);
     const [userMessage, setUserMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
     const [displayedMessage, setDisplayedMessage] = useState('');
+
+    useEffect(() => {
+        if (responseMessage && responseRef.current) {
+            responseRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [responseMessage]);
+
+    const playAudio = () => {
+        const audio = new Audio('/welcome.mp3'); // Path to your audio file
+        audio.play()
+            .then(() => setAudioPlayed(true))
+            .catch((error) => {
+                console.error('Error playing audio:', error);
+            });
+    };
+
+    useEffect(() => {
+        if (!audioPlayed) {
+            const handleInteraction = () => {
+                playAudio();
+                document.removeEventListener('click', handleInteraction);
+                document.removeEventListener('keydown', handleInteraction);
+            };
+
+            document.addEventListener('click', handleInteraction);
+            document.addEventListener('keydown', handleInteraction);
+
+            return () => {
+                document.removeEventListener('click', handleInteraction);
+                document.removeEventListener('keydown', handleInteraction);
+            };
+        }
+    }, [audioPlayed]);
 
     // simulates like the chat is writting itself
     useEffect(() => {
@@ -31,17 +68,17 @@ const HomePage: React.FC = () => {
         return () => clearInterval(interval);
     }, [responseMessage]);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (message = "") => {
         try {
             if (isLoading) return;
             setResponseMessage(null)
 
             setIsLoading(true)
             const resp = await fetchToken({
-                message: userMessage,
+                message: message || userMessage,
             });
-            setResponseMessage(resp?.message)
-            console.log('Response:', resp);
+            setResponseMessage(resp?.text)
+            playBase64Audio(resp.audioB64)
         } catch (error) {
             console.error('Error submitting message:', error);
         } finally {
@@ -49,16 +86,22 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const handleCardClick = async (token: FeaturedToken) => {
+        const tokenmsg = `Featured Token ${token.symbol}`
+        await handleSubmit(tokenmsg)
+    };
+
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             {/* Top Navigation Bar */}
             <nav className="flex justify-between items-center px-8 py-4 bg-gray-800">
-                <div className="text-xl font-bold">Logo</div>
+                <div className="flex items-center">
+                    <img src="/images/PalmsLogoWhite.png" alt="Logo" className="h-10 object-contain"/>
+                </div>
                 <div className="flex space-x-6">
-                    <a href="#" className="hover:text-purple-400">Home</a>
                     <a href="#" className="hover:text-purple-400">Features</a>
-                    <a href="#" className="hover:text-purple-400">Pricing</a>
-                    <a href="#" className="hover:text-purple-400">Contact Us</a>
+                    <a href="#" className="hover:text-purple-400">Token</a>
+                    <a href="#" className="hover:text-purple-400">Community</a>
                 </div>
                 <div className="w-8 h-8 bg-purple-600 rounded-full"></div>
             </nav>
@@ -85,15 +128,35 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {/* Dynamic Carousel for Featured Tokens */}
-                    <div className="mt-2 max-w-full overflow-x-auto w-full z-10">
-                        <div className="flex overflow-scroll space-x-6 [&>div]:flex-shrink-0">
+                    <div className="mt-0 max-w-full overflow-x-auto">
+                        <div className="flex space-x-6">
                             {featuredTokens.map((token, index) => (
                                 <div
                                     key={index}
-                                    className="flex-shrink-0 p-4 bg-gradient-to-b from-grey-800 via-transparent to-transparent rounded-lg border border-purple-500 shadow-lg text-center w-60 backdrop-blur-sm"
+                                    onClick={() => handleCardClick(token)}
+                                    className="flex-shrink-0 p-4 bg-gradient-to-b from-purple-700 via-transparent to-transparent rounded-lg border border-purple-500 shadow-lg w-60 backdrop-blur-sm text-left"
                                 >
-                                    <h3 className="text-lg font-bold text-white">{token.name}</h3>
-                                    <p className="mt-2 text-purple-300">{token.price ? `$${token.price}` : 'N/A'}</p>
+                                    <div className="flex justify-center mb-2">
+                                        <img
+                                            src={token.image || '/placeholder.png'}
+                                            alt={token.name}
+                                            className="w-12 h-12 rounded-full"
+                                        />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-white mb-1">{token.name} <span
+                                        className="text-purple-300">({token.symbol})</span></h3>
+                                    <p className="text-sm text-purple-300 mb-1">💰
+                                        Price: {token.price ? `$${token.price.toFixed(2)}` : 'N/A'}</p>
+                                    <p className="text-sm text-purple-300 mb-1">📊
+                                        Volume: {token.volume ? `$${token.volume.toLocaleString()}` : 'N/A'}</p>
+                                    {/*<p className="text-sm text-purple-300 mb-1">🪙*/}
+                                    {/*    Contract: {token.contractAddress || 'N/A'}</p>*/}
+                                    <p className="text-sm text-purple-300 mb-1">
+                                        📈 24h % Change: {token.change24h ? `${token.change24h.toFixed(2)}%` : 'N/A'}</p>
+                                    <p className="text-sm text-purple-300 mb-1">
+                                        🏔️ ATH % Change: {token.athChange ? `${token.athChange.toFixed(2)}%` : 'N/A'}</p>
+                                    <p className="text-sm text-purple-300">💼 Market
+                                        Cap: {token.marketCap ? `$${token.marketCap.toLocaleString()}` : 'N/A'}</p>
                                 </div>
                             ))}
                         </div>
@@ -112,24 +175,18 @@ const HomePage: React.FC = () => {
                                 disabled={isLoading}
                             />
                             <button
-                                onClick={handleSubmit}
+                                onClick={() => handleSubmit()}
                                 className="mt-4 w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg transition duration-300"
                                 disabled={isLoading}
                             >
-                                {isLoading ? <FaSpinner className="animate-spin" /> : 'Send'}
+                                {isLoading ? <FaSpinner className="animate-spin"/> : 'Send'}
                             </button>
                         </div>
 
                         {/*/!* AI Assistant Response Section *!/*/}
-                        {/*{responseMessage && (*/}
-                        {/*    <div className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl">*/}
-                        {/*        <h3 className="text-lg font-bold text-purple-300">Assistants Response:</h3>*/}
-                        {/*        <p className="mt-2">{responseMessage}</p>*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
-                        {/* AI Assistant Response Section */}
                         {responseMessage && (
-                            <div className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl overflow-auto break-words">
+                            <div ref={responseRef}
+                                className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl overflow-auto break-words">
                                 <h3 className="text-lg font-bold text-purple-300">Palm:</h3>
                                 <ReactMarkdown className="mt-2 whitespace-pre-wrap break-words">{displayedMessage}</ReactMarkdown>
                             </div>
