@@ -133,7 +133,7 @@ const HomePage: React.FC = () => {
             playBase64Audio(resp.audioB64)
         } catch (error) {
             console.error('Error submitting message:', error);
-            setResponseMessage("request failed please retry")
+            setResponseMessage("request failed - please provide a valid contract address")
         } finally {
             setIsLoading(false);
         }
