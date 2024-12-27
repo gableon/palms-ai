@@ -225,7 +225,7 @@ const HomePage: React.FC = () => {
                                 type="text"
                                 value={userMessage}
                                 onChange={(e) => setUserMessage(e.target.value)}
-                                placeholder="Type your question here..."
+                                placeholder="Contract Address..."
                                 className="w-full p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 disabled={isLoading}
                             />
