@@ -167,9 +167,22 @@ const HomePage: React.FC = () => {
                     <img src="/images/PalmsLogoWhite.png" alt="Logo" className="h-10 object-contain"/>
                 </div>
                 <div className="flex space-x-6">
-                    <a href="#" className="hover:text-purple-400">Features</a>
-                    <a href="#" className="hover:text-purple-400">Token</a>
-                    <a href="#" className="hover:text-purple-400">Community</a>
+                    <a href="https://aipalms.com" className="hover:text-purple-400">Home</a>
+                    <a href="https://aipalms.com/#roadmap" className="hover:text-purple-400">Roadmap</a>
+                    <a href="https://github.com/gableon/palms-open-api" className="hover:text-purple-400">Github</a>
+                    <div className="relative group">
+                        <a
+                            href="#"
+                            className="text-gray-500 cursor-not-allowed"
+                            aria-disabled="true"
+                        >
+                            DeFi
+                        </a>
+                        <span
+                            className="absolute top-full mt-2 hidden text-xs text-white bg-gray-800 px-2 py-1 rounded group-hover:block">
+            Coming soon
+        </span>
+                    </div>
                 </div>
                 <div className="w-8 h-8 bg-purple-600 rounded-full"></div>
             </nav>
