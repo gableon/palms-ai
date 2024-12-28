@@ -8,7 +8,6 @@ import ReactMarkdown from 'react-markdown';
 import {FeaturedToken} from "@/types";
 import {getTokenName} from "@/api/tokenName";
 import {getBase64Audio} from "@/utils";
-import {res} from "pino-std-serializers";
 
 const HomePage: React.FC = () => {
     const {featuredTokens} = useContext(AgentContext);
@@ -133,13 +132,15 @@ const HomePage: React.FC = () => {
                 image, name, symbol
             } = token ? {image: token.image, name: token.name, symbol: token.symbol}
                 : await getTokenName(userMessage)
-            setTokenName(`${name} - ${symbol}`)
-            setTokenImage(image || "")
 
             const tokenmsg = token ? `Featured Token ${token.symbol}` : userMessage;
             const resp = await fetchToken({
                 message: tokenmsg,
             });
+
+            setTokenName(`${name} - ${symbol}`)
+            setTokenImage(image || "")
+
             _stopAudio()
             if (resp.ok) {
                 _playAudio('base64', resp.audioB64)
