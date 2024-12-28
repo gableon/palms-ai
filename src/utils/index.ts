@@ -3,9 +3,9 @@ export const findSolanaAddress = (input: string): string[] => {
     return input.match(regex) || [];
 };
 
-export const playBase64Audio = (base64: string) => {
+export const getBase64Audio = (base64: string) : HTMLAudioElement | null => {
     try {
-        if (!base64) return;
+        if (!base64) return null;
         // Convert Base64 to a binary string
         const binaryString = atob(base64);
 
@@ -22,10 +22,10 @@ export const playBase64Audio = (base64: string) => {
         const audioUrl = URL.createObjectURL(blob);
 
         // Create an Audio object and play it
-        const audio = new Audio(audioUrl);
-        audio.play();
+        return new Audio(audioUrl);
     } catch (error) {
         console.error("Error playing Base64 audio:", error);
+        return null;
     }
 }
 

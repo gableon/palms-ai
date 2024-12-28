@@ -5,14 +5,15 @@ import {AgentContext} from "@/contexts/AgentProvider";
 import {fetchToken} from "@/api/fetchToken";
 import {FaSpinner} from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
-import {playBase64Audio} from "@/utils";
 import {FeaturedToken} from "@/types";
 import {getTokenName} from "@/api/tokenName";
+import {getBase64Audio} from "@/utils";
+import {res} from "pino-std-serializers";
 
 const HomePage: React.FC = () => {
     const {featuredTokens} = useContext(AgentContext);
     const responseRef = useRef<HTMLDivElement | null>(null);
-    const welcomeAudioRef = useRef<HTMLAudioElement | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const [audioPlayed, setAudioPlayed] = useState(false);
     const [userMessage, setUserMessage] = useState('');
@@ -29,37 +30,32 @@ const HomePage: React.FC = () => {
         }
     }, [responseMessage]);
 
-    const stopWelcomeAudio = () => {
-        if (welcomeAudioRef.current) {
-            welcomeAudioRef.current.pause();
-            welcomeAudioRef.current.currentTime = 0; // Reset to the beginning
+    const _stopAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
         }
-    };
+    }
 
-    const playAudio = () => {
-        const welcomeAudio = new Audio('/welcome.mp3');
-        welcomeAudioRef.current = welcomeAudio;
-        welcomeAudio.play()
+    const _playAudio = (audioName: string, b64?: string) => {
+        // stop audio
+        _stopAudio()
+        // build audio
+        const audio = b64 ? getBase64Audio(b64) : new Audio(`./${audioName}.mp3`)
+
+        // play audio
+        audioRef.current = audio
+        audio?.play()
             .then(() => setAudioPlayed(true))
             .catch((error) => {
-                console.error('Error playing audio:', error);
-            });
-    };
-
-    const playErrorAudio = () => {
-        const audio = new Audio('/error.mp3');
-        welcomeAudioRef.current = audio;
-        audio.play()
-            .then(() => setAudioPlayed(true))
-            .catch((error) => {
-                console.error('Error playing audio:', error);
+                console.error(`Error playing audio ${audioName}:`, error);
             });
     }
 
     useEffect(() => {
         if (!audioPlayed) {
             const handleInteraction = () => {
-                playAudio();
+                _playAudio('welcome')
                 document.removeEventListener('click', handleInteraction);
                 document.removeEventListener('keydown', handleInteraction);
             };
@@ -144,11 +140,11 @@ const HomePage: React.FC = () => {
             const resp = await fetchToken({
                 message: tokenmsg,
             });
-            stopWelcomeAudio()
+            _stopAudio()
             if (resp.ok) {
-                playBase64Audio(resp.audioB64)
+                _playAudio('base64', resp.audioB64)
             } else {
-                playErrorAudio()
+                _playAudio("error")
             }
             setResponseMessage(resp?.text)
         } catch (error) {
