@@ -45,6 +45,7 @@ export async function fetchToken({ message }: { message: string }) {
             text: responseData.text || "InVaL1D R3Sp0nS3!¡",
             audioB64: responseData.audio_base64 || "",
             audioId: responseData.audio_id || "",
+            tokenAddress: responseData.token_address || "",
         };
     } catch (error) {
         console.error('Error sending message to Lambda:', error);

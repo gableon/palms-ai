@@ -18,6 +18,8 @@ const HomePage: React.FC = () => {
     const [userMessage, setUserMessage] = useState('');
     const [tokenName, setTokenName] = useState("Palms");
     const [tokenImage, setTokenImage] = useState("");
+    const [tokenAddress, setTokenAddress] = useState("");
+    const [copySuccess, setCopySuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
     const [displayedMessage, setDisplayedMessage] = useState('');
@@ -148,6 +150,7 @@ const HomePage: React.FC = () => {
                 _playAudio("error")
             }
             setResponseMessage(resp?.text)
+            setTokenAddress(resp?.tokenAddress)
         } catch (error) {
             console.error('Error submitting message:', error);
             setResponseMessage("request failed - please provide a valid contract address")
@@ -157,8 +160,25 @@ const HomePage: React.FC = () => {
     };
 
     const handleCardClick = async (token: FeaturedToken) => {
+        console.log("token", token)
         await handleSubmit(token)
     };
+
+    const copyToClipboard = () : void => {
+        console.log("token address", tokenAddress)
+        if (!tokenAddress) {
+            // todo: show a snackbar error
+            console.error('Could not copy to clipboard')
+        }
+        navigator.clipboard.writeText(tokenAddress).then(() =>{
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000)
+        }).catch(err => {
+            console.error("Could not copy to clipboard", err);
+            setCopySuccess(false);
+        })
+        return;
+    }
 
     return (
         <div className="min-h-screen bg-gray-900 text-white">
@@ -287,7 +307,19 @@ const HomePage: React.FC = () => {
                                         className="w-10 h-10 rounded-full border-2 border-purple-300"
                                     />
                                 )}
-                                <h3 className="text-lg font-bold text-purple-300">{tokenName}</h3>
+                                <h3 className="text-lg font-bold">{tokenName}</h3>
+                                <div className="mt-4 flex space-x-4 items-center">
+                                    <button className="px-4 py-2 bg-purple hover:bg-purple-600 text-white rounded-md shadow-md">Buy Token</button>
+                                    <button
+                                        onClick={copyToClipboard}
+                                        className="px-4 py-2 bg-purple hover:bg-purple-600 text-white rounded-md shadow-md"
+                                    >
+                                        Copy Address
+                                    </button>
+                                    {copySuccess && (
+                                        <span className="text-green-500 font-bold"> Copied to Clipboard! </span>
+                                    )}
+                                </div>
                                 <ReactMarkdown
                                     className="mt-2 whitespace-pre-wrap break-words">{displayedMessage}</ReactMarkdown>
                             </div>
