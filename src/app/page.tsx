@@ -128,7 +128,8 @@ const HomePage: React.FC = () => {
         }
     }, [isLoading]);
 
-    const handleSubmit = async (token?: FeaturedToken | undefined) => {
+    // const handleSubmit = async (token?: FeaturedToken | undefined) => {
+    const handleSubmit = async () => {
         try {
             if (isLoading) return;
             setIsLoading(true)
@@ -136,28 +137,6 @@ const HomePage: React.FC = () => {
             await delay(1500)
             _playAudio('teasing')
             return;
-
-            const {
-                image, name, symbol
-            } = token ? {image: token.image, name: token.name, symbol: token.symbol}
-                : await getTokenName(userMessage)
-
-            const tokenmsg = token ? `Featured Token ${token.symbol}` : userMessage;
-            const resp = await fetchToken({
-                message: tokenmsg,
-            });
-
-            setTokenName(`${name} - ${symbol}`)
-            setTokenImage(image || "")
-
-            _stopAudio()
-            if (resp.ok) {
-                _playAudio('base64', resp.audioB64)
-            } else {
-                _playAudio("error")
-            }
-            setResponseMessage(resp?.text)
-            setTokenAddress(resp?.tokenAddress)
         } catch (error) {
             console.error('Error submitting message:', error);
             setResponseMessage("request failed - please provide a valid contract address")
@@ -168,7 +147,7 @@ const HomePage: React.FC = () => {
 
     const handleCardClick = async (token: FeaturedToken) => {
         console.log("token", token)
-        await handleSubmit(token)
+        await handleSubmit()
     };
 
     const copyToClipboard = () : void => {
