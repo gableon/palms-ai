@@ -1,16 +1,16 @@
 'use client'
 
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {AgentContext} from "@/contexts/AgentProvider";
-import {fetchToken} from "@/api/fetchToken";
-import {FaSpinner} from 'react-icons/fa';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { AgentContext } from "@/contexts/AgentProvider";
+import { fetchToken } from "@/api/fetchToken";
+import { FaSpinner } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
-import {FeaturedToken} from "@/types";
-import {getTokenName} from "@/api/tokenName";
-import {getBase64Audio} from "@/utils";
+import { FeaturedToken } from "@/types";
+import { getTokenName } from "@/api/tokenName";
+import {delay, getBase64Audio} from "@/utils";
 
 const HomePage: React.FC = () => {
-    const {featuredTokens} = useContext(AgentContext);
+    const { featuredTokens } = useContext(AgentContext);
     const responseRef = useRef<HTMLDivElement | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -93,6 +93,8 @@ const HomePage: React.FC = () => {
 
         if (isLoading) {
             const texts = [
+                'looking for your pants size',
+                'mouth to mouth huh?',
                 'fetching LLM data & processing model...',
                 'connecting to the blockchain...',
                 'analyzing token trends...',
@@ -130,6 +132,11 @@ const HomePage: React.FC = () => {
         try {
             if (isLoading) return;
             setIsLoading(true)
+            _stopAudio()
+            await delay(1500)
+            _playAudio('teasing')
+            return;
+
             const {
                 image, name, symbol
             } = token ? {image: token.image, name: token.name, symbol: token.symbol}
@@ -181,16 +188,16 @@ const HomePage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white">
+        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-cyan-900 to-gray-900 text-cyan-50">
             {/* Top Navigation Bar */}
             <nav className="flex justify-between items-center px-8 py-4 bg-gray-800">
                 <div className="flex items-center">
-                    <img src="/images/PalmsLogoWhite.png" alt="Logo" className="h-10 object-contain"/>
+                    <img src="/images/PalmsLogoWhite.png" alt="Logo" className="h-10 object-contain" />
                 </div>
                 <div className="flex space-x-6">
-                    <a href="https://aipalms.com" className="hover:text-purple-400">Home</a>
-                    <a href="https://aipalms.com/#roadmap" className="hover:text-purple-400">Roadmap</a>
-                    <a href="https://github.com/gableon/palms-open-api" className="hover:text-purple-400">Github</a>
+                    <a href="https://aipalms.com" className="hover:text-cyan-300">Home</a>
+                    <a href="https://aipalms.com/#roadmap" className="hover:text-cyan-300">Roadmap</a>
+                    <a href="https://github.com/gableon/palms-open-api" className="hover:text-cyan-300">Github</a>
                     <div className="relative group">
                         <a
                             href="#"
@@ -201,11 +208,11 @@ const HomePage: React.FC = () => {
                         </a>
                         <span
                             className="absolute top-full mt-2 hidden text-xs text-white bg-gray-800 px-2 py-1 rounded group-hover:block">
-            Coming soon
-        </span>
+                            Coming soon
+                        </span>
                     </div>
                 </div>
-                <div className="w-8 h-8 bg-purple-600 rounded-full"></div>
+                <div className="w-8 h-8 bg-cyan-600 rounded-full"></div>
             </nav>
 
             {/* Main Hero Section */}
@@ -214,8 +221,7 @@ const HomePage: React.FC = () => {
                     {/* Vibrant Soundwave Animation */}
                     <div className="absolute inset-0 flex items-center justify-center z-0">
                         <div
-                            className="w-full h-64 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-xl blur-lg opacity-30"></div>
-                        {/*<div className="absolute inset-0 flex items-center justify-center bg-no-repeat bg-cover bg-center bg-[url(/images/vibrant-sound-wave.jpeg)]"/>*/}
+                            className="w-full h-64 bg-gradient-to-r from-cyan-500 to-green-200 rounded-xl blur-lg opacity-40"></div>
                     </div>
                     <div className="relative z-10 text-center">
                         <div className="w-full h-40 flex justify-center items-center mt-10">
@@ -223,22 +229,20 @@ const HomePage: React.FC = () => {
                                 {/* Placeholder for Animation */}
                                 <div className="w-80 h-80 flex justify-center items-center">
                                     <div
-                                        className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse blur-lg w-full h-full"></div>
+                                        className="bg-gradient-to-r from-cyan-500 to-green-200 rounded-full animate-pulse blur-lg w-full h-full"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Dynamic Carousel for Featured Tokens */}
-                    {/*<div className="mt-0 max-w-full overflow-x-auto whitespace-nowrap">*/}
-                    <div
-                        className="relative mt-0 max-w-full overflow-x-auto whitespace-nowrap overscroll-contain scroll-touch">
+                    <div className="relative mt-0 max-w-full overflow-x-auto whitespace-nowrap overscroll-contain scroll-touch">
                         <div className="flex space-x-6">
                             {featuredTokens.map((token, index) => (
                                 <div
                                     key={index}
                                     onClick={() => handleCardClick(token)}
-                                    className="flex-shrink-0 p-4 bg-gradient-to-b from-purple-700 via-transparent to-transparent rounded-lg border border-purple-500 shadow-lg w-60 backdrop-blur-sm text-left"
+                                    className="flex-shrink-0 p-4 bg-gradient-to-b from-gray-900 to-cyan-900 rounded-lg border border-cyan-400 shadow-lg w-60 backdrop-blur-md text-left"
                                 >
                                     <div className="flex justify-center mb-2">
                                         <img
@@ -247,20 +251,18 @@ const HomePage: React.FC = () => {
                                             className="w-12 h-12 rounded-full"
                                         />
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-1">{token.name} <span
-                                        className="text-purple-300">({token.symbol})</span></h3>
-                                    <p className="text-sm text-purple-300 mb-1">💰
+                                    <h3 className="text-lg font-bold text-cyan-300 mb-1">{token.name} <span
+                                        className="text-cyan-400">({token.symbol})</span></h3>
+                                    <p className="text-sm text-cyan-400 mb-1">💰
                                         Price: {token.price ? `$${token.price.toFixed(2)}` : 'N/A'}</p>
-                                    <p className="text-sm text-purple-300 mb-1">📊
+                                    <p className="text-sm text-cyan-400 mb-1">📊
                                         Volume: {token.volume ? `$${token.volume.toLocaleString()}` : 'N/A'}</p>
-                                    {/*<p className="text-sm text-purple-300 mb-1">🪙*/}
-                                    {/*    Contract: {token.contractAddress || 'N/A'}</p>*/}
-                                    <p className="text-sm text-purple-300 mb-1">
+                                    <p className="text-sm text-cyan-400 mb-1">
                                         📈 24h % Change: {token.change24h ? `${token.change24h.toFixed(2)}%` : 'N/A'}</p>
-                                    <p className="text-sm text-purple-300 mb-1">
+                                    <p className="text-sm text-cyan-400 mb-1">
                                         🏔️ ATH %
                                         Change: {token.athChange ? `${token.athChange.toFixed(2)}%` : 'N/A'}</p>
-                                    <p className="text-sm text-purple-300">💼 Market
+                                    <p className="text-sm text-cyan-400">💼 Market
                                         Cap: {token.marketCap ? `$${token.marketCap.toLocaleString()}` : 'N/A'}</p>
                                 </div>
                             ))}
@@ -269,25 +271,25 @@ const HomePage: React.FC = () => {
 
                     {/* User Question Input Section */}
                     <div className="mt-16 w-full flex flex-col items-center z-10">
-                        <h2 className="text-2xl font-bold text-purple-300 mb-4">Ask Palm</h2>
+                        <h2 className="text-2xl font-bold text-cyan-300 mb-4">Ask Palm</h2>
+                        <h6 className="text-xs font-bold text-cyan-300 mb-4">disqualified from SOL hackathon for being too sexy</h6>
                         <div className="w-full max-w-2xl">
                             <input
                                 type="text"
                                 value={userMessage}
                                 onChange={(e) => setUserMessage(e.target.value)}
                                 placeholder="Contract Address..."
-                                className="w-full p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-full p-4 bg-gradient-to-r from-gray-800 to-cyan-900 text-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
                                 disabled={isLoading}
                             />
                             <button
                                 onClick={() => handleSubmit()}
-                                className="mt-4 w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg transition duration-300"
+                                className="mt-4 w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-lg shadow-lg transition duration-300"
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
                                     <div className="ml-4 flex items-center space-x-2">
-                                        <FaSpinner className="animate-spin"/>
-                                        {/*<b><i>fetching LLM data & processing model...</i></b>*/}
+                                        <FaSpinner className="animate-spin" />
                                         <b><i>{loadingText}</i></b>
                                     </div>
                                 ) : (
@@ -296,7 +298,7 @@ const HomePage: React.FC = () => {
                             </button>
                         </div>
 
-                        {/*/!* AI Assistant Response Section *!/*/}
+                        {/* AI Assistant Response Section */}
                         {responseMessage && (
                             <div ref={responseRef}
                                  className="mt-8 p-4 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg max-w-2xl overflow-auto break-words">
@@ -304,15 +306,15 @@ const HomePage: React.FC = () => {
                                     <img
                                         src={tokenImage}
                                         alt={`${tokenName} logo`}
-                                        className="w-10 h-10 rounded-full border-2 border-purple-300"
+                                        className="w-10 h-10 rounded-full border-2 border-cyan-300"
                                     />
                                 )}
                                 <h3 className="text-lg font-bold">{tokenName}</h3>
                                 <div className="mt-4 flex space-x-4 items-center">
-                                    <button className="px-4 py-2 bg-purple hover:bg-purple-600 text-white rounded-md shadow-md">Buy Token</button>
+                                    <button className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md shadow-md">Buy Token</button>
                                     <button
                                         onClick={copyToClipboard}
-                                        className="px-4 py-2 bg-purple hover:bg-purple-600 text-white rounded-md shadow-md"
+                                        className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-md shadow-md"
                                     >
                                         Copy Address
                                     </button>
@@ -332,7 +334,7 @@ const HomePage: React.FC = () => {
 
             {/* Footer Section */}
             <footer className="mt-16 py-6 bg-gray-800 text-center">
-                <p className="text-gray-400">&copy; 2024 Palms AI. All rights reserved.</p>
+                <p className="text-cyan-400">&copy; 2024 Palms AI. All rights reserved.</p>
             </footer>
         </div>
     );
