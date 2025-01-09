@@ -2,11 +2,9 @@
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AgentContext } from "@/contexts/AgentProvider";
-import { fetchToken } from "@/api/fetchToken";
 import { FaSpinner } from 'react-icons/fa';
 import ReactMarkdown from 'react-markdown';
 import { FeaturedToken } from "@/types";
-import { getTokenName } from "@/api/tokenName";
 import {delay, getBase64Audio} from "@/utils";
 
 const HomePage: React.FC = () => {
@@ -16,9 +14,9 @@ const HomePage: React.FC = () => {
 
     const [audioPlayed, setAudioPlayed] = useState(false);
     const [userMessage, setUserMessage] = useState('');
-    const [tokenName, setTokenName] = useState("Palms");
-    const [tokenImage, setTokenImage] = useState("");
-    const [tokenAddress, setTokenAddress] = useState("");
+    const [tokenName] = useState("Palms");
+    const [tokenImage] = useState("");
+    const [tokenAddress] = useState("");
     const [copySuccess, setCopySuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
